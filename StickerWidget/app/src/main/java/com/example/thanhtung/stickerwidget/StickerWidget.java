@@ -51,7 +51,7 @@ public class StickerWidget extends AppWidgetProvider {
 
             // Construct the RemoteViews object
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.sticker_widget);
-            views.setOnClickPendingIntent(R.id.rlBackground, pendingIntent);
+            views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
 
 //            Sticker sticker = WidgetPrefs.loadPref(context, appWidgetId);
 //            views.setTextViewText(R.id.appwidget_text, sticker.getTitle());

@@ -1,22 +1,49 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/sticker1"
-    android:id="@+id/rlBackground"
     android:clickable="true">
 
-    <TextView
-        android:id="@+id/appwidget_text"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textSize="30sp"
-        android:textColor="@color/colorBlack"
-        android:padding="10dp"
-        android:textAlignment="center"
-        android:gravity="center"/>
+        android:id="@+id/rlAppWidget"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/memo_bg_001"
+            android:id="@+id/appwidget_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Hello"
+            android:id="@+id/appwidget_text"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/memo_tag_001"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/appwidget_tag"
+        android:adjustViewBounds="true"/>
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="180dp"
+        android:src="@drawable/y_girlemo001"
+        android:id="@+id/appwidget_icon"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitEnd"/>
+
 
 </RelativeLayout>

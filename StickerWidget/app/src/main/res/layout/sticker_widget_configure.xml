@@ -13,67 +13,62 @@
         android:orientation="horizontal"
         android:background="@drawable/gradient_blue">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="9">
+            android:id="@+id/rlSticker">
 
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="40dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="9">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/memo_bg_001"
+                    android:scaleType="fitXY"
+                    android:id="@+id/imgBackground"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"/>
 
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="3">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Hello"
+                    android:id="@+id/edtSticker"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textAlignment="center"
+                    android:textSize="20sp" />
+            </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/memo_bg_001"
-                    android:padding="40dp"
-                    android:id="@+id/rlSticker">
-
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Hello"
-                        android:id="@+id/edtSticker"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:textAlignment="center"
-                        android:textSize="20sp" />
-
-
-                </RelativeLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="8"
-                android:padding="5dp">
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/memo_tag_001"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:id="@+id/imgTag" />
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/y_girlemo001"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:id="@+id/imgIcon" />
 
 
-            </LinearLayout>
 
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="9">
+        </RelativeLayout>
 
-        </LinearLayout>
 
     </LinearLayout>
 
@@ -205,11 +200,11 @@
                         android:id="@+id/seekBar"
                         android:thumb="@drawable/thumb"
                         android:progressDrawable="@null"
+                        android:progress="20"
+                        android:max="80"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:progress="20"
-                        android:max="80"/>
+                        android:layout_alignParentStart="true" />
 
                 </RelativeLayout>
 

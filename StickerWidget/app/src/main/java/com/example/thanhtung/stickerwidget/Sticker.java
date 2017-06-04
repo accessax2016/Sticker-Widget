@@ -10,13 +10,19 @@ public class Sticker {
     boolean isItalic;
     int textsize;
     int color;
+    int background;
+    int tag;
+    int icon;
 
-    public Sticker(String title, boolean isBold, boolean isItalic, int textsize, int color) {
+    public Sticker(String title, boolean isBold, boolean isItalic, int textsize, int color, int background, int tag, int icon) {
         this.title = title;
         this.isBold = isBold;
         this.isItalic = isItalic;
         this.textsize = textsize;
         this.color = color;
+        this.background = background;
+        this.tag = tag;
+        this.icon = icon;
     }
 
     public String getTitle() {
@@ -57,5 +63,29 @@ public class Sticker {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public int getBackground() {
+        return background;
+    }
+
+    public void setBackground(int background) {
+        this.background = background;
+    }
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
+
+    public int getIcon() {
+        return icon;
+    }
+
+    public void setIcon(int icon) {
+        this.icon = icon;
     }
 }
