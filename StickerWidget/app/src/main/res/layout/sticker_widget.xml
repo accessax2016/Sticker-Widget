@@ -2,7 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sticker1"
-    android:id="@+id/rlBackground">
+    android:id="@+id/rlBackground"
+    android:clickable="true">
 
     <TextView
         android:id="@+id/appwidget_text"
@@ -13,6 +14,9 @@
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
         android:textSize="30sp"
-        android:textColor="@color/colorBlack" />
+        android:textColor="@color/colorBlack"
+        android:padding="10dp"
+        android:textAlignment="center"
+        android:gravity="center"/>
 
 </RelativeLayout>

@@ -1,73 +1,52 @@
 package com.example.thanhtung.stickerwidget;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.RemoteViews;
+import android.widget.SeekBar;
+
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 /**
  * The configuration screen for the {@link StickerWidget StickerWidget} AppWidget.
  */
-public class StickerWidgetConfigureActivity extends Activity implements View.OnClickListener{
+public class StickerWidgetConfigureActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener{
 
-    private static final String PREFS_NAME = "com.example.thanhtung.stickerwidget.StickerWidget";
-    private static final String PREF_PREFIX_KEY = "appwidget_";
+    Boolean isSave;
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    int mTypeface;
-    public  static int mTextSize;
+    Boolean isBold = false;
+    Boolean isItalic = false;
+    int mTextSize = 20;
+    int mTextColor = Color.BLACK;
 
-    TextView tvCharactersLeft;
     RelativeLayout rlSticker;
-    public static EditText edtSticker;
-    LinearLayout loSkin;
+    EditText edtSticker;
     LinearLayout loOK;
     LinearLayout loCancel;
     LinearLayout loSave;
     LinearLayout loClear;
+    SeekBar seekBar;
     LinearLayout loColor;
-    LinearLayout loTextSize;
+    LinearLayout loSkin;
     LinearLayout loBold;
     LinearLayout loItalic;
 
     public StickerWidgetConfigureActivity() {
         super();
-    }
-
-    // Write the prefix to the SharedPreferences object for this widget
-    static void savePref(Context context, int appWidgetId, String title, int style, int textsize) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId, title);
-        prefs.putInt(PREF_PREFIX_KEY + appWidgetId +"_Style", style);
-        prefs.putInt(PREF_PREFIX_KEY + appWidgetId +"_TextSize", textsize);
-        prefs.apply();
-    }
-
-    // Read the prefix from the SharedPreferences object for this widget.
-    // If there is no preference saved, get the default from a resource
-    static Sticker loadPref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String title = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        int style = prefs.getInt(PREF_PREFIX_KEY + appWidgetId +"_Style", Typeface.NORMAL);
-        int textsize = prefs.getInt(PREF_PREFIX_KEY + appWidgetId +"_TextSize", 20);
-        Sticker sticker = new Sticker(title, style, textsize);
-        return sticker;
-    }
-
-    static void deleteTitlePref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId);
-        prefs.apply();
     }
 
     @Override
@@ -97,62 +76,90 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
             return;
         }
 
-        Sticker sticker = loadPref(StickerWidgetConfigureActivity.this, mAppWidgetId);
+        Sticker sticker = WidgetPrefs.loadPref(StickerWidgetConfigureActivity.this, mAppWidgetId);
         edtSticker.setText(sticker.getTitle());
-        edtSticker.setTypeface(null, sticker.getStyle());
+        //edtSticker.setTypeface(null, sticker.getStyle());
         edtSticker.setTextSize(sticker.getTextsize());
+        edtSticker.setTextColor(sticker.getColor());
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (isSave)
+            loOK.performClick();
+        finish();
     }
 
     private void initControl() {
-        tvCharactersLeft = (TextView) findViewById(R.id.tvCharactersLeft);
         rlSticker = (RelativeLayout) findViewById(R.id.rlSticker);
         edtSticker = (EditText) findViewById(R.id.edtSticker);
-        loSkin = (LinearLayout) findViewById(R.id.loSkin);
         loOK = (LinearLayout) findViewById(R.id.loOK);
         loCancel = (LinearLayout) findViewById(R.id.loCancel);
         loSave = (LinearLayout) findViewById(R.id.loSave);
         loClear = (LinearLayout) findViewById(R.id.loClear);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
         loColor = (LinearLayout) findViewById(R.id.loColor);
-        loTextSize = (LinearLayout) findViewById(R.id.loTextSize);
+        loSkin = (LinearLayout) findViewById(R.id.loSkin);
         loBold = (LinearLayout) findViewById(R.id.loBold);
         loItalic = (LinearLayout) findViewById(R.id.loItalic);
     }
 
     private void setEvent() {
-        tvCharactersLeft.setOnClickListener(this);
         rlSticker.setOnClickListener(this);
         edtSticker.setOnClickListener(this);
-        loSkin.setOnClickListener(this);
         loOK.setOnClickListener(this);
         loCancel.setOnClickListener(this);
         loSave.setOnClickListener(this);
         loClear.setOnClickListener(this);
+        seekBar.setOnSeekBarChangeListener(this);
         loColor.setOnClickListener(this);
-        loTextSize.setOnClickListener(this);
+        loSkin.setOnClickListener(this);
         loBold.setOnClickListener(this);
         loItalic.setOnClickListener(this);
+    }
+
+    public static String addBoldTag(boolean doIt, String original) {
+        if (doIt) {
+            return "<b>" + original + "</b>";
+        }
+        return original;
+    }
+
+    public static String addItalicTag(boolean doIt, String original) {
+        if (doIt) {
+            return "<i>" + original + "</i>";
+        }
+        return original;
+    }
+
+    public static String replaceNewLine(String original) {
+        return original.replace("\n", "<br>");
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tvCharactersLeft:
-                break;
             case R.id.rlSticker:
                 break;
             case R.id.edtSticker:
-                break;
-            case R.id.loSkin:
                 break;
             case R.id.loOK:
                 final Context context = StickerWidgetConfigureActivity.this;
 
                 // When the button is clicked, store the string locally
-                savePref(context, mAppWidgetId, edtSticker.getText().toString(), mTypeface, mTextSize);
+                WidgetPrefs.savePref(context, mAppWidgetId, edtSticker.getText().toString(), isBold, isItalic, mTextSize, mTextColor);
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                StickerWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.sticker_widget);
+                Sticker sticker = WidgetPrefs.loadPref(context, mAppWidgetId);
+                //views.setTextViewText(R.id.appwidget_text, sticker.getTitle());
+                views.setTextViewText(R.id.appwidget_text, Html.fromHtml(addItalicTag(sticker.isItalic(), addBoldTag(sticker.isBold(), replaceNewLine(sticker.getTitle())))));
+                views.setTextViewTextSize(R.id.appwidget_text, TypedValue.COMPLEX_UNIT_SP, sticker.getTextsize());
+                views.setTextColor(R.id.appwidget_text, sticker.getColor());
+
+                appWidgetManager.updateAppWidget(mAppWidgetId, views);
 
                 // Make sure we pass back the original appWidgetId
                 Intent resultValue = new Intent();
@@ -161,37 +168,71 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 finish();
                 break;
             case R.id.loCancel:
+                if (isSave)
+                    loOK.performClick();
+                finish();
                 break;
             case R.id.loSave:
+                isSave = true;
                 break;
             case R.id.loClear:
+                edtSticker.setText("");
+                edtSticker.setTypeface(null, Typeface.NORMAL);
+                edtSticker.setTextSize(20);
+                edtSticker.setTextColor(Color.BLACK);
+                loBold.setSelected(false);
+                loItalic.setSelected(false);
+                //
+                isSave = false;
+                isBold = false;
+                isItalic = false;
+                mTextSize = 20;
+                mTextColor = Color.BLACK;
+                seekBar.setProgress(20);
                 break;
             case R.id.loColor:
+                ColorPickerDialogBuilder
+                        .with(this)
+                        .setTitle("Choose Color")
+                        .initialColor(edtSticker.getCurrentTextColor())
+                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                        .density(12)
+                        .setPositiveButton("OK", new ColorPickerClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                                edtSticker.setTextColor(selectedColor);
+                                mTextColor = selectedColor;
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .build()
+                        .show();
                 break;
-            case R.id.loTextSize:
-                loadFragment(new SeekBar_TextSize());
+            case R.id.loSkin:
                 break;
             case R.id.loBold:
                 if (loBold.isSelected()) {
                     if (loItalic.isSelected()) {
                         edtSticker.setTypeface(null, Typeface.ITALIC);
-                        mTypeface = Typeface.ITALIC;
                     }
                     else {
                         edtSticker.setTypeface(null, Typeface.NORMAL);
-                        mTypeface = Typeface.NORMAL;
                     }
+                    isBold = false;
                     loBold.setSelected(false);
                 }
                 else {
                     if (loItalic.isSelected()) {
                         edtSticker.setTypeface(null, Typeface.BOLD_ITALIC);
-                        mTypeface = Typeface.BOLD_ITALIC;
                     }
                     else {
                         edtSticker.setTypeface(null, Typeface.BOLD);
-                        mTypeface = Typeface.BOLD;
                     }
+                    isBold = true;
                     loBold.setSelected(true);
                 }
                 break;
@@ -199,23 +240,21 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 if (loItalic.isSelected()) {
                     if (loBold.isSelected()) {
                         edtSticker.setTypeface(null, Typeface.BOLD);
-                        mTypeface = Typeface.BOLD;
                     }
                     else {
                         edtSticker.setTypeface(null, Typeface.NORMAL);
-                        mTypeface = Typeface.NORMAL;
                     }
+                    isItalic = false;
                     loItalic.setSelected(false);
                 }
                 else {
                     if (loBold.isSelected()) {
                         edtSticker.setTypeface(null, Typeface.BOLD_ITALIC);
-                        mTypeface = Typeface.BOLD_ITALIC;
                     }
                     else {
                         edtSticker.setTypeface(null, Typeface.ITALIC);
-                        mTypeface = Typeface.ITALIC;
                     }
+                    isItalic = true;
                     loItalic.setSelected(true);
                 }
                 break;
@@ -223,11 +262,21 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 break;
         }
     }
-    private void loadFragment(Fragment fragment) {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.fmDetailStyle, fragment);
-        fragmentTransaction.commit();
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        edtSticker.setTextSize(progress);
+        mTextSize = progress;
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }
 

@@ -29,14 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="9">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:text="Characters Left: 256"
-                    android:textStyle="normal|bold"
-                    android:textSize="20sp"
-                    android:gravity="center"
-                    android:id="@+id/tvCharactersLeft" />
+
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,20 +39,22 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/sticker1"
+                    android:background="@drawable/memo_bg_001"
                     android:padding="40dp"
                     android:id="@+id/rlSticker">
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Hello"
                         android:id="@+id/edtSticker"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:textAlignment="center"
                         android:textSize="20sp" />
+
+
                 </RelativeLayout>
 
             </LinearLayout>
@@ -67,17 +62,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="8"
-                android:background="@drawable/selector_background"
-                android:padding="5dp"
-                android:id="@+id/loSkin">
+                android:padding="5dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="SKIN"
-                    android:textSize="30sp"
-                    android:textStyle="normal|bold"
-                    android:gravity="center" />
 
             </LinearLayout>
 
@@ -190,17 +176,42 @@
                 android:layout_height="match_parent"
                 android:layout_weight="5"
                 android:id="@+id/loDetailStyle"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:background="@drawable/selector_background"
                 android:layout_margin="5dp">
 
-                <FrameLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="15dp"
-                    android:id="@+id/fmDetailStyle">
+                    android:layout_weight="7"
+                    android:text="Text Size"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textStyle="normal|bold" />
+                <RelativeLayout
+                    android:orientation="vertical" android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:padding="10dp">
 
-                </FrameLayout>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/progress"/>
+
+                    <SeekBar
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/seekBar"
+                        android:thumb="@drawable/thumb"
+                        android:progressDrawable="@null"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:progress="20"
+                        android:max="80"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
             <LinearLayout
@@ -230,7 +241,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/loTextSize"
+                    android:id="@+id/loSkin"
                     android:orientation="horizontal"
                     android:background="@drawable/selector_background"
                     android:layout_margin="5dp">
@@ -238,8 +249,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/textsize"
-                        android:padding="10dp"/>
+                        android:src="@drawable/decorate" />
 
                 </LinearLayout>
 

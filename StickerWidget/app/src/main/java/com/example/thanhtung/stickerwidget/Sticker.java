@@ -6,13 +6,17 @@ package com.example.thanhtung.stickerwidget;
 
 public class Sticker {
     String title;
-    int style;
+    boolean isBold;
+    boolean isItalic;
     int textsize;
+    int color;
 
-    public Sticker(String title, int style, int textsize) {
+    public Sticker(String title, boolean isBold, boolean isItalic, int textsize, int color) {
         this.title = title;
-        this.style = style;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
         this.textsize = textsize;
+        this.color = color;
     }
 
     public String getTitle() {
@@ -23,12 +27,20 @@ public class Sticker {
         this.title = title;
     }
 
-    public int getStyle() {
-        return style;
+    public boolean isBold() {
+        return isBold;
     }
 
-    public void setStyle(int style) {
-        this.style = style;
+    public void setBold(boolean bold) {
+        isBold = bold;
+    }
+
+    public boolean isItalic() {
+        return isItalic;
+    }
+
+    public void setItalic(boolean italic) {
+        isItalic = italic;
     }
 
     public int getTextsize() {
@@ -37,5 +49,13 @@ public class Sticker {
 
     public void setTextsize(int textsize) {
         this.textsize = textsize;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }
