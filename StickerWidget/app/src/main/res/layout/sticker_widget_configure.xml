@@ -140,11 +140,21 @@
                     android:background="@drawable/selector_background"
                     android:layout_margin="5dp">
 
-                    <ImageView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/save"
-                        android:padding="5dp" />
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/save"
+                            android:padding="5dp" />
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/btn_uncheck"
+                            android:id="@+id/imgSave" />
+                    </RelativeLayout>
+
 
                 </LinearLayout>
 
@@ -257,12 +267,21 @@
                     android:background="@drawable/selector_background"
                     android:layout_margin="5dp">
 
-                    <ImageView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/bold"
-                        android:padding="5dp"
-                        android:id="@+id/imageView" />
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/bold"
+                            android:padding="5dp"
+                            android:id="@+id/imageView" />
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/btn_uncheck"
+                            android:id="@+id/imgBold"/>
+                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -275,11 +294,20 @@
                     android:background="@drawable/selector_background"
                     android:layout_margin="5dp">
 
-                    <ImageView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/italic"
-                        android:padding="10dp"/>
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/italic"
+                            android:padding="10dp"/>
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/btn_uncheck"
+                            android:id="@+id/imgItalic"/>
+                    </RelativeLayout>
 
                 </LinearLayout>
 

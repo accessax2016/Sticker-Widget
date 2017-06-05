@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,12 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+
 import static com.example.thanhtung.stickerwidget.R.drawable.memo_tag_001;
 
 /**
@@ -35,7 +43,7 @@ import static com.example.thanhtung.stickerwidget.R.drawable.memo_tag_001;
  */
 public class StickerWidgetConfigureActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener{
 
-    Boolean isSave;
+    Boolean isSave = false;
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     Boolean isBold = false;
     Boolean isItalic = false;
@@ -53,12 +61,15 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
     LinearLayout loOK;
     LinearLayout loCancel;
     LinearLayout loSave;
+    ImageView imgSave;
     LinearLayout loClear;
     SeekBar seekBar;
     LinearLayout loColor;
     LinearLayout loSkin;
     LinearLayout loBold;
+    ImageView imgBold;
     LinearLayout loItalic;
+    ImageView imgItalic;
 
     public StickerWidgetConfigureActivity() {
         super();
@@ -101,15 +112,16 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (isSave)
-            loOK.performClick();
-        else {
-            // Make sure we pass back the original appWidgetId
-            Intent resultValueCancel = new Intent();
-            resultValueCancel.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_CANCELED, resultValueCancel);
-            finish();
-        }
+//        if (isSave)
+//            loOK.performClick();
+//        else {
+//            // Make sure we pass back the original appWidgetId
+//            Intent resultValueCancel = new Intent();
+//            resultValueCancel.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+//            setResult(RESULT_CANCELED, resultValueCancel);
+//            finish();
+//        }
+        finish();
     }
 
     private void initControl() {
@@ -121,12 +133,15 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         loOK = (LinearLayout) findViewById(R.id.loOK);
         loCancel = (LinearLayout) findViewById(R.id.loCancel);
         loSave = (LinearLayout) findViewById(R.id.loSave);
+        imgSave = (ImageView) findViewById(R.id.imgSave);
         loClear = (LinearLayout) findViewById(R.id.loClear);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         loColor = (LinearLayout) findViewById(R.id.loColor);
         loSkin = (LinearLayout) findViewById(R.id.loSkin);
         loBold = (LinearLayout) findViewById(R.id.loBold);
+        imgBold = (ImageView) findViewById(R.id.imgBold);
         loItalic = (LinearLayout) findViewById(R.id.loItalic);
+        imgItalic = (ImageView) findViewById(R.id.imgItalic);
     }
 
     private void setEvent() {
@@ -161,6 +176,22 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         return original.replace("\n", "<br>");
     }
 
+    private void saveSticker(int widgetId, String title) {
+        try {
+            File root = new File(Environment.getExternalStorageDirectory(), getResources().getString(R.string.app_name));
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+            FileWriter writer = new FileWriter(new File(root, new StringBuilder(String.valueOf(getResources().getString(R.string.app_name))).append(widgetId).append(".txt").toString()), true);
+            Date mDate = new Date();
+            writer.append("----------  " + DateFormat.getTimeInstance(2).format(mDate) + ", " + DateFormat.getDateInstance(2).format(mDate) + "  ----------" + "\n" + title + "\n\n");
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            Log.d("saveSticker","Cannot save title");
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -179,13 +210,14 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.sticker_widget);
                 Sticker sticker = WidgetPrefs.loadPref(context, mAppWidgetId);
-                //views.setTextViewText(R.id.appwidget_text, sticker.getTitle());
                 views.setTextViewText(R.id.appwidget_text, Html.fromHtml(addItalicTag(sticker.isItalic(), addBoldTag(sticker.isBold(), replaceNewLine(sticker.getTitle())))));
                 views.setTextViewTextSize(R.id.appwidget_text, TypedValue.COMPLEX_UNIT_SP, sticker.getTextsize());
                 views.setTextColor(R.id.appwidget_text, sticker.getColor());
                 views.setImageViewResource(R.id.appwidget_background, sticker.getBackground());
                 views.setImageViewResource(R.id.appwidget_tag, sticker.getTag());
                 views.setImageViewResource(R.id.appwidget_icon, sticker.getIcon());
+                if (isSave)
+                    saveSticker(mAppWidgetId, sticker.getTitle());
 
                 appWidgetManager.updateAppWidget(mAppWidgetId, views);
 
@@ -196,18 +228,26 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 finish();
                 break;
             case R.id.loCancel:
-                if (isSave)
-                    loOK.performClick();
-                else {
-                    // Make sure we pass back the original appWidgetId
-                    Intent resultValueCancel = new Intent();
-                    resultValueCancel.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    setResult(RESULT_CANCELED, resultValueCancel);
-                    finish();
-                }
+//                if (isSave)
+//                    loOK.performClick();
+//                else {
+//                    // Make sure we pass back the original appWidgetId
+//                    Intent resultValueCancel = new Intent();
+//                    resultValueCancel.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+//                    setResult(RESULT_CANCELED, resultValueCancel);
+//                    finish();
+//                }
+                finish();
                 break;
             case R.id.loSave:
-                isSave = true;
+                if (isSave) {
+                    isSave = false;
+                    imgSave.setImageResource(R.drawable.btn_uncheck);
+                }
+                else {
+                    isSave = true;
+                    imgSave.setImageResource(R.drawable.btn_check);
+                }
                 break;
             case R.id.loClear:
                 edtSticker.setText("");
@@ -268,6 +308,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                     }
                     isBold = false;
                     loBold.setSelected(false);
+                    imgBold.setImageResource(R.drawable.btn_uncheck);
                 }
                 else {
                     if (loItalic.isSelected()) {
@@ -278,6 +319,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                     }
                     isBold = true;
                     loBold.setSelected(true);
+                    imgBold.setImageResource(R.drawable.btn_check);
                 }
                 break;
             case R.id.loItalic:
@@ -290,6 +332,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                     }
                     isItalic = false;
                     loItalic.setSelected(false);
+                    imgItalic.setImageResource(R.drawable.btn_uncheck);
                 }
                 else {
                     if (loBold.isSelected()) {
@@ -300,6 +343,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                     }
                     isItalic = true;
                     loItalic.setSelected(true);
+                    imgItalic.setImageResource(R.drawable.btn_check);
                 }
                 break;
             default:
