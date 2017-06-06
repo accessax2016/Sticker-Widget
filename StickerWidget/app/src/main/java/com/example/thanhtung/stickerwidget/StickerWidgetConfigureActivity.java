@@ -46,14 +46,11 @@ import static com.example.thanhtung.stickerwidget.R.drawable.memo_tag_001;
 public class StickerWidgetConfigureActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener{
 
     static Boolean isSave = false;
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;   //khởi tạo id không hợp lệ
     Boolean isBold = false;
     Boolean isItalic = false;
     int mTextSize = 20;
     int mTextColor = Color.BLACK;
-//    int mBackground = R.drawable.memo_bg_001;
-//    int mTag = memo_tag_001;
-//    int mIcon = R.drawable.y_girlemo001;
 
     RelativeLayout rlSticker;
     ImageView imgBackground;
@@ -81,16 +78,14 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        // Set the result to CANCELED.  This will cause the widget host to cancel
-        // out of the widget placement if the user presses the back button.
-        setResult(RESULT_CANCELED);
+        setResult(RESULT_CANCELED);     //set Result là RESULT_CANCELED nếu ấn nút Back trên đt để không lưu thao tác
 
         setContentView(R.layout.sticker_widget_configure);
 
         initControl();
         setEvent();
 
-        // Find the widget id from the intent.
+        // Tìm id của widget trong Intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -98,7 +93,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
-        // If this activity was started with an intent without an app widget ID, finish with an error.
+        // Nếu lấy được id không hợp lệ thì báo lỗi và dừng
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
             return;
@@ -108,9 +103,8 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
 
 
     }
-
+    //Hiển thị giao diện
     private void showView() {
-        //Hiển thị giao diện
         Sticker sticker = WidgetPrefs.loadPref(StickerWidgetConfigureActivity.this, mAppWidgetId);
         edtSticker.setText(sticker.getTitle());
         if (sticker.isBold() && sticker.isItalic()) {
@@ -158,15 +152,19 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         imgTag.setTag(sticker.getTag());
         imgIcon.setImageResource(sticker.getIcon());
         imgIcon.setTag(sticker.getIcon());
+        isSave = false;
+        imgSave.setImageResource(R.drawable.btn_uncheck);
 
     }
 
+    //Ấn nút Back trên đt sẽ kết thúc và không lưu thao tác
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
 
+    //Khởi tạo các View
     private void initControl() {
         rlSticker = (RelativeLayout) findViewById(R.id.rlSticker);
         imgBackground = (ImageView) findViewById(R.id.imgBackground);
@@ -187,6 +185,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         imgItalic = (ImageView) findViewById(R.id.imgItalic);
     }
 
+    //Gán sự kiện cho các View
     private void setEvent() {
         rlSticker.setOnClickListener(this);
         edtSticker.setOnClickListener(this);
@@ -201,6 +200,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         loItalic.setOnClickListener(this);
     }
 
+    //Thêm thẻ <b> cho chuỗi (vì dùng Html)
     public static String addBoldTag(boolean doIt, String original) {
         if (doIt) {
             return "<b>" + original + "</b>";
@@ -208,6 +208,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         return original;
     }
 
+    //Thêm thẻ <i> cho chuỗi (vì dùng Html)
     public static String addItalicTag(boolean doIt, String original) {
         if (doIt) {
             return "<i>" + original + "</i>";
@@ -215,10 +216,12 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         return original;
     }
 
+    //Sửa /n thành <br> (vì dùng Html)
     public static String replaceNewLine(String original) {
         return original.replace("\n", "<br>");
     }
 
+    //Lưu nội dung vào thẻ nhớ tránh mất dữ liệu quan trọng
     private static void saveSticker(int widgetId, String title) {
         try {
             File root = new File(Environment.getExternalStorageDirectory(), "StickerWidget");
@@ -260,6 +263,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
 
     }
 
+    // Xử lý sự kiện click cho các View
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -270,11 +274,11 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
             case R.id.loOK:
                 final Context context = StickerWidgetConfigureActivity.this;
 
-                // When the button is clicked, store the string locally
+                // Khi Click nút OK thì lưu dữ liệu vào SharedPreferences
                 WidgetPrefs.savePref(context, mAppWidgetId, edtSticker.getText().toString(), isBold, isItalic, mTextSize, mTextColor,
                         (Integer)imgBackground.getTag(), (Integer)imgTag.getTag(), (Integer)imgIcon.getTag());
 
-                // It is the responsibility of the configuration activity to update the app widget
+                // Cấu hình các thay đổi của widget thông qua AppWidgetManager
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.sticker_widget);
                 Sticker sticker = WidgetPrefs.loadPref(context, mAppWidgetId);
@@ -287,33 +291,18 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 if (isSave)
                     saveSticker(mAppWidgetId, sticker.getTitle());
 
-//                Intent intent = new Intent(context, StickerWidgetConfigureActivity.class);
-//                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-//                views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
-
-
-
-
-                // Make sure we pass back the original appWidgetId
+                // Trả về Intent gồm id của widget
                 Intent resultValue = new Intent(context, StickerWidgetConfigureActivity.class);
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, resultValue, 0);
+                // Gán sự kiện khi click widget trên Homesrceen
                 views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
+                // Cập nhật các thay đổi
                 appWidgetManager.updateAppWidget(mAppWidgetId, views);
-//                updateWidget(context);
                 finish();
                 break;
             case R.id.loCancel:
-//                if (isSave)
-//                    loOK.performClick();
-//                else {
-//                    // Make sure we pass back the original appWidgetId
-//                    Intent resultValueCancel = new Intent();
-//                    resultValueCancel.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-//                    setResult(RESULT_CANCELED, resultValueCancel);
-//                    finish();
-//                }
                 finish();
                 break;
             case R.id.loSave:
@@ -344,13 +333,11 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 isBold = false;
                 isItalic = false;
                 mTextSize = 20;
-                mTextColor = Color.BLACK;
-//                mBackground = R.drawable.memo_bg_001;
-//                mTag = memo_tag_001;
-//                mIcon = R.drawable.y_girlemo001;
                 seekBar.setProgress(20);
+                mTextColor = Color.BLACK;
                 break;
             case R.id.loColor:
+                // Dialog chọn màu cho chữ
                 ColorPickerDialogBuilder
                         .with(this)
                         .setTitle("Choose Color")

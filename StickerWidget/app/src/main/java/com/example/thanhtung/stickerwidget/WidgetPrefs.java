@@ -11,7 +11,7 @@ import android.graphics.Color;
 public class WidgetPrefs {
     private static final String PREFS_NAME = "com.example.thanhtung.stickerwidget.StickerWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
-    // Write the prefix to the SharedPreferences object for this widget
+    // Lưu dữ liệu vào SharedPreferences
     static void savePref(Context context, int appWidgetId, String title, boolean isBold, boolean isItalic, int textsize, int color,
                          int background, int tag, int icon) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
@@ -26,8 +26,8 @@ public class WidgetPrefs {
         prefs.apply();
     }
 
-    // Read the prefix from the SharedPreferences object for this widget.
-    // If there is no preference saved, get the default from a resource
+    // Lấy dữ liệu từ ShareedPreferences
+    // Nếu không có thì lấy mặc định
     static Sticker loadPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String title = prefs.getString(PREF_PREFIX_KEY + appWidgetId, "Hello");
@@ -42,7 +42,8 @@ public class WidgetPrefs {
         return sticker;
     }
 
-    static void deleteTitlePref(Context context, int appWidgetId) {
+    // Xóa dữ liệu trong SharedPreferences
+    static void deletePref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.remove(PREF_PREFIX_KEY + appWidgetId +"_BOLD");
