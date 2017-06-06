@@ -2,7 +2,9 @@ package com.example.thanhtung.stickerwidget;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +26,6 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
@@ -44,15 +45,15 @@ import static com.example.thanhtung.stickerwidget.R.drawable.memo_tag_001;
  */
 public class StickerWidgetConfigureActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener{
 
-    Boolean isSave = false;
+    static Boolean isSave = false;
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     Boolean isBold = false;
     Boolean isItalic = false;
     int mTextSize = 20;
     int mTextColor = Color.BLACK;
-    int mBackground = R.drawable.memo_bg_001;
-    int mTag = memo_tag_001;
-    int mIcon = R.drawable.y_girlemo001;
+//    int mBackground = R.drawable.memo_bg_001;
+//    int mTag = memo_tag_001;
+//    int mIcon = R.drawable.y_girlemo001;
 
     RelativeLayout rlSticker;
     ImageView imgBackground;
@@ -112,23 +113,52 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         //Hiển thị giao diện
         Sticker sticker = WidgetPrefs.loadPref(StickerWidgetConfigureActivity.this, mAppWidgetId);
         edtSticker.setText(sticker.getTitle());
-        if (sticker.isBold() && sticker.isItalic())
+        if (sticker.isBold() && sticker.isItalic()) {
             edtSticker.setTypeface(null, Typeface.BOLD_ITALIC);
+            isBold = true;
+            loBold.setSelected(true);
+            imgBold.setImageResource(R.drawable.btn_check);
+            isItalic = true;
+            loItalic.setSelected(true);
+            imgItalic.setImageResource(R.drawable.btn_check);
+        }
         else {
-            if (sticker.isBold())
+            if (sticker.isBold()) {
                 edtSticker.setTypeface(null, Typeface.BOLD);
+                isBold = true;
+                loBold.setSelected(true);
+                imgBold.setImageResource(R.drawable.btn_check);
+            }
+
             else {
-                if (sticker.isItalic())
+                if (sticker.isItalic()) {
                     edtSticker.setTypeface(null, Typeface.ITALIC);
-                else
+                    isItalic = true;
+                    loItalic.setSelected(true);
+                    imgItalic.setImageResource(R.drawable.btn_check);
+                }
+                else {
                     edtSticker.setTypeface(null, Typeface.NORMAL);
+                    isBold = false;
+                    loBold.setSelected(false);
+                    imgBold.setImageResource(R.drawable.btn_uncheck);
+                    isItalic = false;
+                    loItalic.setSelected(false);
+                    imgItalic.setImageResource(R.drawable.btn_uncheck);
+                }
             }
         }
         edtSticker.setTextSize(sticker.getTextsize());
+        seekBar.setProgress(sticker.getTextsize());
         edtSticker.setTextColor(sticker.getColor());
+        mTextColor = sticker.getColor();
         imgBackground.setImageResource(sticker.getBackground());
+        imgBackground.setTag(sticker.getBackground());
         imgTag.setImageResource(sticker.getTag());
+        imgTag.setTag(sticker.getTag());
         imgIcon.setImageResource(sticker.getIcon());
+        imgIcon.setTag(sticker.getIcon());
+
     }
 
     @Override
@@ -189,13 +219,13 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         return original.replace("\n", "<br>");
     }
 
-    private void saveSticker(int widgetId, String title) {
+    private static void saveSticker(int widgetId, String title) {
         try {
-            File root = new File(Environment.getExternalStorageDirectory(), getResources().getString(R.string.app_name));
+            File root = new File(Environment.getExternalStorageDirectory(), "StickerWidget");
             if (!root.exists()) {
                 root.mkdirs();
             }
-            FileWriter writer = new FileWriter(new File(root, new StringBuilder(String.valueOf(getResources().getString(R.string.app_name))).append(widgetId).append(".txt").toString()), true);
+            FileWriter writer = new FileWriter(new File(root, new StringBuilder("StickerWidget").append(widgetId).append(".txt").toString()), true);
             Date mDate = new Date();
             writer.append("----------  " + DateFormat.getTimeInstance(2).format(mDate) + ", " + DateFormat.getDateInstance(2).format(mDate) + "  ----------" + "\n" + title + "\n\n");
             writer.flush();
@@ -203,6 +233,31 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         } catch (IOException e) {
             Log.d("saveSticker","Cannot save title");
         }
+    }
+
+    public static void updateWidget(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] widgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, StickerWidget.class));
+        for (int widgetId : widgetIds) {
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.sticker_widget);
+            Sticker sticker = WidgetPrefs.loadPref(context, widgetId);
+            views.setTextViewText(R.id.appwidget_text, Html.fromHtml(addItalicTag(sticker.isItalic(), addBoldTag(sticker.isBold(), replaceNewLine(sticker.getTitle())))));
+            views.setTextViewTextSize(R.id.appwidget_text, TypedValue.COMPLEX_UNIT_SP, sticker.getTextsize());
+            views.setTextColor(R.id.appwidget_text, sticker.getColor());
+            views.setImageViewResource(R.id.appwidget_background, sticker.getBackground());
+            views.setImageViewResource(R.id.appwidget_tag, sticker.getTag());
+            views.setImageViewResource(R.id.appwidget_icon, sticker.getIcon());
+            if (isSave)
+                saveSticker(widgetId, sticker.getTitle());
+
+            Intent intent = new Intent(context, StickerWidgetConfigureActivity.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
+
+            appWidgetManager.updateAppWidget(widgetId, views);
+        }
+
     }
 
     @Override
@@ -217,7 +272,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
 
                 // When the button is clicked, store the string locally
                 WidgetPrefs.savePref(context, mAppWidgetId, edtSticker.getText().toString(), isBold, isItalic, mTextSize, mTextColor,
-                        mBackground, mTag, mIcon);
+                        (Integer)imgBackground.getTag(), (Integer)imgTag.getTag(), (Integer)imgIcon.getTag());
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -232,12 +287,21 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 if (isSave)
                     saveSticker(mAppWidgetId, sticker.getTitle());
 
-                appWidgetManager.updateAppWidget(mAppWidgetId, views);
+//                Intent intent = new Intent(context, StickerWidgetConfigureActivity.class);
+//                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+//                views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
+
+
+
 
                 // Make sure we pass back the original appWidgetId
-                Intent resultValue = new Intent();
+                Intent resultValue = new Intent(context, StickerWidgetConfigureActivity.class);
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, resultValue, 0);
+                views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
+                appWidgetManager.updateAppWidget(mAppWidgetId, views);
+//                updateWidget(context);
                 finish();
                 break;
             case R.id.loCancel:
@@ -281,9 +345,9 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 isItalic = false;
                 mTextSize = 20;
                 mTextColor = Color.BLACK;
-                mBackground = R.drawable.memo_bg_001;
-                mTag = memo_tag_001;
-                mIcon = R.drawable.y_girlemo001;
+//                mBackground = R.drawable.memo_bg_001;
+//                mTag = memo_tag_001;
+//                mIcon = R.drawable.y_girlemo001;
                 seekBar.setProgress(20);
                 break;
             case R.id.loColor:
@@ -441,7 +505,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int img = (Integer) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), String.valueOf(img), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), String.valueOf(img), Toast.LENGTH_SHORT).show();
                 imageViewChange.setImageResource(img);
                 imageViewChange.setTag(img);
             }

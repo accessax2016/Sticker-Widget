@@ -5,17 +5,18 @@
     android:clickable="true">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/rlAppWidget"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:src="@drawable/memo_bg_001"
-            android:id="@+id/appwidget_background" />
+            android:id="@+id/appwidget_background"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,19 +32,19 @@
 
     <ImageView
         android:layout_width="80dp"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:src="@drawable/memo_tag_001"
         android:layout_alignParentLeft="true"
-        android:id="@+id/appwidget_tag"
-        android:scaleType="fitEnd"/>
+        android:layout_alignParentTop="true"
+        android:id="@+id/appwidget_tag" />
 
     <ImageView
         android:layout_width="80dp"
-        android:layout_height="160dp"
+        android:layout_height="80dp"
         android:src="@drawable/y_girlemo001"
         android:id="@+id/appwidget_icon"
         android:layout_alignParentRight="true"
-        android:scaleType="fitEnd"/>
+        android:layout_alignParentBottom="true" />
 
 
 </RelativeLayout>

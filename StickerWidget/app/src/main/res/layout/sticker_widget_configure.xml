@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="5"
-        android:orientation="horizontal"
-        android:background="@drawable/gradient_blue">
+        android:background="@drawable/gradient_blue"
+        android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/rlSticker"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/rlSticker">
+            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -24,47 +24,47 @@
                 android:padding="40dp">
 
                 <ImageView
+                    android:id="@+id/imgBackground"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/memo_bg_001"
-                    android:scaleType="fitXY"
-                    android:id="@+id/imgBackground"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"/>
+                    android:layout_alignParentTop="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/memo_bg_001" />
 
                 <EditText
+                    android:id="@+id/edtSticker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Hello"
-                    android:id="@+id/edtSticker"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:text="Hello"
                     android:textAlignment="center"
                     android:textSize="20sp" />
             </RelativeLayout>
 
             <ImageView
+                android:id="@+id/imgTag"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/memo_tag_001"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:paddingTop="10dp"
+                android:layout_alignParentTop="true"
                 android:paddingLeft="10dp"
-                android:id="@+id/imgTag" />
+                android:paddingTop="10dp"
+                android:src="@drawable/memo_tag_001" />
+
             <ImageView
+                android:id="@+id/imgIcon"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/y_girlemo001"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:id="@+id/imgIcon" />
-
+                android:src="@drawable/y_girlemo001" />
 
 
         </RelativeLayout>
