@@ -30,7 +30,7 @@ public class WidgetPrefs {
     // If there is no preference saved, get the default from a resource
     static Sticker loadPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String title = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+        String title = prefs.getString(PREF_PREFIX_KEY + appWidgetId, "Hello");
         boolean isBold = prefs.getBoolean(PREF_PREFIX_KEY + appWidgetId +"_BOLD", false);
         boolean isItalic = prefs.getBoolean(PREF_PREFIX_KEY + appWidgetId +"_ITALIC", false);
         int textsize = prefs.getInt(PREF_PREFIX_KEY + appWidgetId +"_TextSize", 20);

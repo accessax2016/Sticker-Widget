@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static android.graphics.Typeface.BOLD;
 import static com.example.thanhtung.stickerwidget.R.drawable.memo_tag_001;
 
 /**
@@ -102,25 +103,37 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
             return;
         }
 
-//        Sticker sticker = WidgetPrefs.loadPref(StickerWidgetConfigureActivity.this, mAppWidgetId);
-//        edtSticker.setText(sticker.getTitle());
-//        edtSticker.setTypeface(null, sticker.getStyle());
-//        edtSticker.setTextSize(sticker.getTextsize());
-//        edtSticker.setTextColor(sticker.getColor());
+        showView();
+
+
+    }
+
+    private void showView() {
+        //Hiển thị giao diện
+        Sticker sticker = WidgetPrefs.loadPref(StickerWidgetConfigureActivity.this, mAppWidgetId);
+        edtSticker.setText(sticker.getTitle());
+        if (sticker.isBold() && sticker.isItalic())
+            edtSticker.setTypeface(null, Typeface.BOLD_ITALIC);
+        else {
+            if (sticker.isBold())
+                edtSticker.setTypeface(null, Typeface.BOLD);
+            else {
+                if (sticker.isItalic())
+                    edtSticker.setTypeface(null, Typeface.ITALIC);
+                else
+                    edtSticker.setTypeface(null, Typeface.NORMAL);
+            }
+        }
+        edtSticker.setTextSize(sticker.getTextsize());
+        edtSticker.setTextColor(sticker.getColor());
+        imgBackground.setImageResource(sticker.getBackground());
+        imgTag.setImageResource(sticker.getTag());
+        imgIcon.setImageResource(sticker.getIcon());
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        if (isSave)
-//            loOK.performClick();
-//        else {
-//            // Make sure we pass back the original appWidgetId
-//            Intent resultValueCancel = new Intent();
-//            resultValueCancel.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-//            setResult(RESULT_CANCELED, resultValueCancel);
-//            finish();
-//        }
         finish();
     }
 
@@ -204,7 +217,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
 
                 // When the button is clicked, store the string locally
                 WidgetPrefs.savePref(context, mAppWidgetId, edtSticker.getText().toString(), isBold, isItalic, mTextSize, mTextColor,
-                        (Integer)imgBackground.getTag(), (Integer)imgTag.getTag(), (Integer)imgIcon.getTag());
+                        mBackground, mTag, mIcon);
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -315,7 +328,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                         edtSticker.setTypeface(null, Typeface.BOLD_ITALIC);
                     }
                     else {
-                        edtSticker.setTypeface(null, Typeface.BOLD);
+                        edtSticker.setTypeface(null, BOLD);
                     }
                     isBold = true;
                     loBold.setSelected(true);
@@ -325,7 +338,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
             case R.id.loItalic:
                 if (loItalic.isSelected()) {
                     if (loBold.isSelected()) {
-                        edtSticker.setTypeface(null, Typeface.BOLD);
+                        edtSticker.setTypeface(null, BOLD);
                     }
                     else {
                         edtSticker.setTypeface(null, Typeface.NORMAL);
@@ -420,6 +433,7 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
     }
 
     private void showAlertDialog(int[] listItemID, int type, int numberColumn, final ImageView imageViewChange, String title) {
+
         GridView gridView = new GridView(this);
         gridView.setAdapter(new SkinAdapter(this, listItemID, type));
         gridView.setNumColumns(numberColumn);
@@ -436,6 +450,12 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(gridView);
         builder.setTitle("Choose "+title);
+        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         builder.show();
     }
 }

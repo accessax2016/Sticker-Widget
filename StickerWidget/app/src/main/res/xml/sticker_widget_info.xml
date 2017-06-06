@@ -3,7 +3,7 @@
     android:configure="com.example.thanhtung.stickerwidget.StickerWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/sticker_widget"
     android:initialLayout="@layout/sticker_widget"
-    android:minHeight="40dp"
+    android:minHeight="110dp"
     android:minWidth="250dp"
     android:previewImage="@drawable/sticker_preview"
     android:resizeMode="none"
