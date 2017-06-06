@@ -294,8 +294,9 @@ public class StickerWidgetConfigureActivity extends Activity implements View.OnC
                 // Trả về Intent gồm id của widget
                 Intent resultValue = new Intent(context, StickerWidgetConfigureActivity.class);
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                //resultValue.setData(Uri.withAppendedPath(Uri.parse("Sticker://widget/id/"), String.valueOf(mAppWidgetId)));
                 setResult(RESULT_OK, resultValue);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, resultValue, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, mAppWidgetId, resultValue, PendingIntent.FLAG_UPDATE_CURRENT);
                 // Gán sự kiện khi click widget trên Homesrceen
                 views.setOnClickPendingIntent(R.id.rlAppWidget, pendingIntent);
                 // Cập nhật các thay đổi
